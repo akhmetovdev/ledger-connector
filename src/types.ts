@@ -24,6 +24,10 @@ declare module '@ledgerhq/hw-transport-http/lib/WebSocketTransport' {
 
 declare module '@ledgerhq/hw-transport-webhid' {
   export default class WebHidTransport implements LedgerTransport {
+    device?: {
+      productName?: 'Nano X' | 'Nano S' | string;
+    };
+
     public static create(): Promise<LedgerTransport>;
 
     public static isSupported(): Promise<boolean>;
