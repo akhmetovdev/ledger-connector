@@ -1,10 +1,7 @@
-import WebSocketTransport from '@ledgerhq/hw-transport-http/lib/WebSocketTransport';
+import U2FTransport from '@ledgerhq/hw-transport-u2f';
 import WebHidTransport from '@ledgerhq/hw-transport-webhid';
 import { UAParser, UAParserInstance } from 'ua-parser-js';
-import { LedgerLiveAppName, WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT } from './constants';
 import { MobileDeviceNotSupportedError, NotAvailableError, SafariNotSupportedError } from './errors';
-import { openLedgerLiveApp } from './utils';
-import { checkWebSocketRecursively } from './websocket';
 
 /**
  *
@@ -19,7 +16,6 @@ let uaParser: UAParserInstance | null = null;
 /**
  *
  */
-let isWebSocketSupportedPromise: Promise<boolean> | null = null;
 let isWebHidSupportedPromise: Promise<boolean> | null = null;
 
 /**
@@ -27,20 +23,15 @@ let isWebHidSupportedPromise: Promise<boolean> | null = null;
  */
 if (typeof window != 'undefined') {
   uaParser = new UAParser();
-  isWebSocketSupportedPromise = WebSocketTransport.isSupported();
   isWebHidSupportedPromise = WebHidTransport.isSupported();
 }
 
 /**
  *
- * @param ledgerLiveAppName
  * @param withCachedTransport
  */
-export async function makeTransport(
-  ledgerLiveAppName: LedgerLiveAppName,
-  withCachedTransport: boolean = true
-): Promise<LedgerTransport> {
-  if (cachedTransport && (withCachedTransport || cachedTransport instanceof WebSocketTransport)) {
+export async function makeTransport(withCachedTransport: boolean = true): Promise<LedgerTransport> {
+  if (cachedTransport && withCachedTransport) {
     if (__DEV__) {
       console.log(`[ledger-connector] returned cached transport:`, cachedTransport);
     }
@@ -48,15 +39,14 @@ export async function makeTransport(
     return cachedTransport;
   }
 
-  if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
+  if (uaParser == null || isWebHidSupportedPromise == null) {
     if (__DEV__) {
-      console.log(
-        `[ledger-connector] not available: ${JSON.stringify({
-          uaParser: uaParser == null,
-          isWebSocketSupportedPromise: isWebSocketSupportedPromise == null,
-          isWebHidSupportedPromise: isWebHidSupportedPromise == null
-        })}`
-      );
+      const notAvailable = {
+        uaParser: uaParser == null,
+        isWebHidSupportedPromise: isWebHidSupportedPromise == null
+      };
+
+      console.log(`[ledger-connector] not available: ${JSON.stringify(notAvailable)}`);
     }
 
     throw new NotAvailableError('NotAvailable');
@@ -77,20 +67,17 @@ export async function makeTransport(
     throw new SafariNotSupportedError('SafariNotSupported');
   }
 
-  const [isWebHidSupported, isWebSocketSupported] = await Promise.all([
-    isWebHidSupportedPromise,
-    isWebSocketSupportedPromise
-  ]);
+  const isWebHidSupported = await isWebHidSupportedPromise;
 
   if (__DEV__) {
-    console.log(`[ledger-connector] supported: ${JSON.stringify({ isWebHidSupported, isWebSocketSupported })}`);
+    console.log(`[ledger-connector] supported: ${JSON.stringify({ isWebHidSupported })}`);
+  }
+
+  if (cachedTransport) {
+    await resetTransport(cachedTransport);
   }
 
   if (isWebHidSupported) {
-    if (cachedTransport) {
-      resetTransport(cachedTransport);
-    }
-
     cachedTransport = await WebHidTransport.create();
 
     if (__DEV__) {
@@ -98,38 +85,24 @@ export async function makeTransport(
     }
 
     return cachedTransport;
-  } else if (isWebSocketSupported) {
-    try {
-      await WebSocketTransport.check(WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT);
-    } catch {
-      openLedgerLiveApp(ledgerLiveAppName);
-
-      await checkWebSocketRecursively();
-    }
-
-    if (cachedTransport) {
-      resetTransport(cachedTransport);
-    }
-
-    cachedTransport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
+  } else {
+    cachedTransport = await U2FTransport.create();
 
     if (__DEV__) {
-      console.log(`[ledger-connector] created WebSocket transport:`, cachedTransport);
+      console.log(`[ledger-connector] created U2F transport:`, cachedTransport);
     }
 
     return cachedTransport;
   }
-
-  throw new NotAvailableError('NotAvailable');
 }
 
 /**
  *
  * @param transport
  */
-export function resetTransport(transport?: LedgerTransport): void {
+export async function resetTransport(transport?: LedgerTransport): Promise<void> {
   if (transport) {
-    void transport.close();
+    await transport.close().catch(() => {});
   }
 
   cachedTransport = null;

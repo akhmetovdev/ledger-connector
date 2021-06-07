@@ -12,8 +12,3 @@ export class SafariNotSupportedError extends Error {}
  *
  */
 export class NotAvailableError extends Error {}
-
-/**
- *
- */
-export class TimeoutError extends Error {}

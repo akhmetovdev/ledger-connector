@@ -12,13 +12,9 @@ interface LedgerTransport {
   close(): Promise<void>;
 }
 
-declare module '@ledgerhq/hw-transport-http/lib/WebSocketTransport' {
-  export default class WebSocketTransport implements LedgerTransport {
-    public static open(url: string): Promise<LedgerTransport>;
-
-    public static isSupported(): Promise<boolean>;
-
-    public static check(url: string, timeout?: number): Promise<void>;
+declare module '@ledgerhq/hw-transport-u2f' {
+  export default class U2FTransport implements LedgerTransport {
+    public static create(): Promise<LedgerTransport>;
 
     public close(): Promise<void>;
   }
