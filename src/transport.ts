@@ -27,7 +27,7 @@ let isWebHidSupportedPromise: Promise<boolean> | null = null;
  */
 if (typeof window != 'undefined') {
   uaParser = new UAParser();
-  isWebSocketSupportedPromise = WebSocketTransport.isSupported()
+  isWebSocketSupportedPromise = WebSocketTransport.isSupported();
   isWebHidSupportedPromise = WebHidTransport.isSupported();
 }
 
@@ -46,9 +46,12 @@ export async function makeTransport(
     throw new NotAvailableError('NotAvailable');
   }
 
-  const { type } = uaParser.getDevice();
+  const { type: deviceType } = uaParser.getDevice();
+  const { name: browserName } = uaParser.getBrowser();
+  const isSafari = browserName ? browserName.toLowerCase().includes('safari') : false;
+  const isNotSafari = !isSafari;
 
-  if (type && ['mobile', 'tablet'].includes(type)) {
+  if (deviceType && ['mobile', 'tablet'].includes(deviceType)) {
     throw new MobileDeviceNotSupportedError('MobileDeviceNotSupported');
   }
 
@@ -57,7 +60,7 @@ export async function makeTransport(
     isWebSocketSupportedPromise
   ]);
 
-  if (isWebHidSupported) {
+  if (isWebHidSupported && isNotSafari) {
     transport = await WebHidTransport.create();
 
     return transport;

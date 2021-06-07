@@ -9,8 +9,4 @@ export * from './app';
 export * from './constants';
 export * from './errors';
 export * from './transport';
-
-export type BtcLedgerApp = typeof Btc.prototype;
-export type EthLedgerApp = typeof Eth.prototype;
-export type WebSocketLedgerTransport = typeof WebSocketTransport.prototype;
-export type WebHidLedgerTransport = typeof WebHidTransport.prototype;
+export { Btc, Eth, WebSocketTransport, WebHidTransport };
