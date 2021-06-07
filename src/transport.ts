@@ -40,7 +40,7 @@ export async function makeTransport(
   ledgerLiveAppName: LedgerLiveAppName,
   withCachedTransport: boolean = true
 ): Promise<LedgerTransport> {
-  if (cachedTransport && withCachedTransport) {
+  if (cachedTransport && (withCachedTransport || cachedTransport instanceof WebSocketTransport)) {
     if (__DEV__) {
       console.log(`[ledger-connector] returned cached transport:`, cachedTransport);
     }
