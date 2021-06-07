@@ -15,7 +15,7 @@ export async function checkWebSocketRecursively(iterator = 0): Promise<void> {
       if (iterator < Constants.WEBSOCKET_CHECK_LIMIT) {
         return await checkWebSocketRecursively(iterator + 1);
       } else {
-        throw new TimeoutError();
+        throw new TimeoutError('TimeoutError');
       }
     }
   );

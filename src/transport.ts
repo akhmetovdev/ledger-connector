@@ -42,13 +42,13 @@ export async function makeTransport(
   }
 
   if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
-    throw new NotAvailableError();
+    throw new NotAvailableError('NotAvailableError');
   }
 
   const { type } = uaParser.getDevice();
 
   if (type && ['mobile', 'tablet'].includes(type)) {
-    throw new MobileDeviceNotSupportedError();
+    throw new MobileDeviceNotSupportedError('MobileDeviceNotSupportedError');
   }
 
   const [isWebHidSupported, isWebSocketSupported] = await Promise.all([
@@ -74,7 +74,7 @@ export async function makeTransport(
     return transport;
   }
 
-  throw new NotAvailableError();
+  throw new NotAvailableError('NotAvailableError');
 }
 
 /**
