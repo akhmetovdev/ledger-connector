@@ -1,0 +1,54 @@
+{
+  "name": "@akhmetovdev/ledger-connector",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/ledger-connector.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "Marat Akhmetov <akhmetovdev@gmail.com>",
+  "homepage": "https://github.com/akhmetovdev/ledger-connector#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhmetovdev/ledger-connector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/akhmetovdev/ledger-connector/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "prepare": "yarn build"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-app-btc": "^5.51.1",
+    "@ledgerhq/hw-app-eth": "^5.53.0",
+    "@ledgerhq/hw-transport-http": "^5.53.0",
+    "@ledgerhq/hw-transport-webhid": "^5.51.1",
+    "ua-parser-js": "^0.7.28"
+  },
+  "devDependencies": {
+    "@types/ua-parser-js": "^0.7.36",
+    "husky": "^6.0.0",
+    "prettier": "^2.3.1",
+    "pretty-quick": "^3.1.0",
+    "tsdx": "^0.14.1",
+    "typescript": "^4.3.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,json}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
