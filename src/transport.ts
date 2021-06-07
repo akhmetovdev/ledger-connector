@@ -87,6 +87,10 @@ export async function makeTransport(
   }
 
   if (isWebHidSupported) {
+    if (cachedTransport) {
+      resetTransport(cachedTransport);
+    }
+
     cachedTransport = await WebHidTransport.create();
 
     if (__DEV__) {
@@ -101,6 +105,10 @@ export async function makeTransport(
       openLedgerLiveApp(ledgerLiveAppName);
 
       await checkWebSocketRecursively();
+    }
+
+    if (cachedTransport) {
+      resetTransport(cachedTransport);
     }
 
     cachedTransport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
