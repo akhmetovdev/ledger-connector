@@ -10,3 +10,4 @@ export * from './constants';
 export * from './errors';
 export * from './transport';
 export { Btc, Eth, WebSocketTransport, WebHidTransport };
+export type LedgerTransport = WebSocketTransport | WebHidTransport;
