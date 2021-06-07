@@ -34,9 +34,13 @@ if (typeof window != 'undefined') {
 /**
  *
  * @param ledgerLiveAppName
+ * @param withCachedTransport
  */
-export async function makeTransport(ledgerLiveAppName: LedgerLiveAppName): Promise<LedgerTransport> {
-  if (cachedTransport) {
+export async function makeTransport(
+  ledgerLiveAppName: LedgerLiveAppName,
+  withCachedTransport: boolean = true
+): Promise<LedgerTransport> {
+  if (cachedTransport && withCachedTransport) {
     if (__DEV__) {
       console.log(`[ledger-connector] returned cached transport:`, cachedTransport);
     }

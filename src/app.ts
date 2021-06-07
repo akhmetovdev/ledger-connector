@@ -5,9 +5,10 @@ import { makeTransport } from './transport';
 
 /**
  *
+ * @param withCachedTransport
  */
-export async function makeEthApp(): Promise<Eth> {
-  const transport = await makeTransport(LedgerLiveAppName.ETH);
+export async function makeEthApp(withCachedTransport: boolean = true): Promise<Eth> {
+  const transport = await makeTransport(LedgerLiveAppName.ETH, withCachedTransport);
 
   return new Eth(transport);
 }
@@ -15,9 +16,13 @@ export async function makeEthApp(): Promise<Eth> {
 /**
  *
  * @param ledgerLiveAppName
+ * @param withCachedTransport
  */
-export async function makeBtcApp(ledgerLiveAppName: LedgerLiveAppName): Promise<Btc> {
-  const transport = await makeTransport(ledgerLiveAppName);
+export async function makeBtcApp(
+  ledgerLiveAppName: LedgerLiveAppName,
+  withCachedTransport: boolean = true
+): Promise<Btc> {
+  const transport = await makeTransport(ledgerLiveAppName, withCachedTransport);
 
   return new Btc(transport);
 }
