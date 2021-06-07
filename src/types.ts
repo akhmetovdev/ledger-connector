@@ -4,9 +4,11 @@ interface Signature<V extends number | string> {
   s: string;
 }
 
-type AddressFormat = 'legacy' | 'p2sh' | 'bech32' | 'cashaddr';
-
 interface LedgerTransport {
+  device?: {
+    productName?: 'Nano X' | 'Nano S' | string;
+  };
+
   close(): Promise<void>;
 }
 
@@ -24,8 +26,8 @@ declare module '@ledgerhq/hw-transport-http/lib/WebSocketTransport' {
 
 declare module '@ledgerhq/hw-transport-webhid' {
   export default class WebHidTransport implements LedgerTransport {
-    device?: {
-      productName?: 'Nano X' | 'Nano S' | string;
+    device: {
+      productName: 'Nano X' | 'Nano S' | string;
     };
 
     public static create(): Promise<LedgerTransport>;
@@ -74,7 +76,7 @@ declare module '@ledgerhq/hw-app-btc' {
 
     public getWalletPublicKey(
       path: string,
-      opts?: boolean | { verify?: boolean; format?: AddressFormat }
+      opts?: boolean | { verify?: boolean; format?: 'legacy' | 'p2sh' | 'bech32' | 'cashaddr' }
     ): Promise<{ publicKey: string; bitcoinAddress: string; chainCode: string }>;
 
     public signMessageNew(path: string, messageHex: string): Promise<Signature<string>>;
