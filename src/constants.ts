@@ -2,8 +2,8 @@
  *
  */
 export enum LedgerLiveAppName {
-  ETHEREUM = 'Ethereum',
-  BITCOIN = 'Bitcoin',
+  ETH = 'Ethereum',
+  BTC = 'Bitcoin',
   DASH = 'Dash',
   FIRO = 'Firo'
 }

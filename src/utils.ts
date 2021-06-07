@@ -15,4 +15,3 @@ export async function delay(ms: number): Promise<void> {
 export function openLedgerLiveApp(ledgerLiveAppName: LedgerLiveAppName): void {
   window.open(`ledgerlive://bridge?appName=${encodeURI(ledgerLiveAppName)}`);
 }
-

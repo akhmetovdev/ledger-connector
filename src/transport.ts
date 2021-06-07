@@ -1,16 +1,25 @@
 import WebSocketTransport from '@ledgerhq/hw-transport-http/lib/WebSocketTransport';
 import WebHidTransport from '@ledgerhq/hw-transport-webhid';
 import { UAParser, UAParserInstance } from 'ua-parser-js';
-import { LedgerLiveAppName, WEBSOCKET_BRIDGE_URL } from './constants';
+import { LedgerLiveAppName, WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT } from './constants';
 import { MobileDeviceNotSupportedError, NotAvailableError } from './errors';
 import { openLedgerLiveApp } from './utils';
-import { checkWebSocket, checkWebSocketRecursively } from './websocket';
+import { checkWebSocketRecursively } from './websocket';
 
 /**
  *
  */
 let transport: WebSocketTransport | WebHidTransport | null = null;
+
+/**
+ *
+ */
 let uaParser: UAParserInstance | null = null;
+
+/**
+ *
+ */
+let isWebSocketSupportedPromise: Promise<boolean> | null = null;
 let isWebHidSupportedPromise: Promise<boolean> | null = null;
 
 /**
@@ -32,7 +41,7 @@ export async function makeTransport(
     return transport;
   }
 
-  if (uaParser == null || isWebHidSupportedPromise == null) {
+  if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
     throw new NotAvailableError();
   }
 
@@ -42,23 +51,30 @@ export async function makeTransport(
     throw new MobileDeviceNotSupportedError();
   }
 
-  const isWebHidSupported = await isWebHidSupportedPromise;
+  const [isWebHidSupported, isWebSocketSupported] = await Promise.all([
+    isWebHidSupportedPromise,
+    isWebSocketSupportedPromise
+  ]);
 
   if (isWebHidSupported) {
     transport = await WebHidTransport.create();
 
     return transport;
-  } else {
+  } else if (isWebSocketSupported) {
     try {
-      await checkWebSocket();
+      await WebSocketTransport.check(WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT);
     } catch {
       openLedgerLiveApp(ledgerLiveAppName);
 
       await checkWebSocketRecursively();
     }
 
-    return await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
+    transport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
+
+    return transport;
   }
+
+  throw new NotAvailableError();
 }
 
 /**

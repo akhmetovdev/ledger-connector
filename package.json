@@ -1,13 +1,16 @@
 {
   "name": "@akhmetovdev/ledger-connector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/ledger-connector.esm.js",
   "typings": "dist/index.d.ts",
+  "module": "dist/ledger-connector.esm.js",
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=10"
+  },
   "author": "Marat Akhmetov <akhmetovdev@gmail.com>",
   "homepage": "https://github.com/akhmetovdev/ledger-connector#readme",
   "repository": {
@@ -23,7 +26,9 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "prepare": "yarn build"
+    "test": "tsdx test",
+    "lint": "tsdx lint src",
+    "prepare": "tsdx build"
   },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^5.51.1",
@@ -35,20 +40,20 @@
   "devDependencies": {
     "@types/ua-parser-js": "^0.7.36",
     "husky": "^6.0.0",
-    "prettier": "^2.3.1",
-    "pretty-quick": "^3.1.0",
     "tsdx": "^0.14.1",
+    "tslib": "^2.2.0",
     "typescript": "^4.3.2"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "tsdx lint"
     }
   },
-  "lint-staged": {
-    "*.{ts,tsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120,
+    "arrowParens": "avoid",
+    "trailingComma": "none",
+    "semi": true
   }
 }

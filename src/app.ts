@@ -7,7 +7,7 @@ import { makeTransport } from './transport';
  *
  */
 export async function makeEthApp(): Promise<Eth> {
-  const transport = await makeTransport(LedgerLiveAppName.ETHEREUM);
+  const transport = await makeTransport(LedgerLiveAppName.ETH);
 
   return new Eth(transport);
 }

@@ -14,6 +14,10 @@ declare module '@ledgerhq/hw-transport-http/lib/WebSocketTransport' {
   export default class WebSocketTransport implements LedgerTransport {
     public static open(url: string): Promise<LedgerTransport>;
 
+    public static isSupported(): Promise<boolean>;
+
+    public static check(url: string, timeout?: number): Promise<void>;
+
     public close(): Promise<void>;
   }
 }
