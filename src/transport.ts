@@ -9,7 +9,7 @@ import { checkWebSocketRecursively } from './websocket';
 /**
  *
  */
-let cachedTransport: WebSocketTransport | WebHidTransport | null = null;
+let cachedTransport: LedgerTransport | null = null;
 
 /**
  *
@@ -35,12 +35,10 @@ if (typeof window != 'undefined') {
  *
  * @param ledgerLiveAppName
  */
-export async function makeTransport(
-  ledgerLiveAppName: LedgerLiveAppName
-): Promise<WebSocketTransport | WebHidTransport> {
+export async function makeTransport(ledgerLiveAppName: LedgerLiveAppName): Promise<LedgerTransport> {
   if (cachedTransport) {
     if (__DEV__) {
-      console.log(`[ledger-connector] returned cached transport`);
+      console.log(`[ledger-connector] returned cached transport:`, cachedTransport);
     }
 
     return cachedTransport;
@@ -81,7 +79,7 @@ export async function makeTransport(
   ]);
 
   if (__DEV__) {
-    console.log(`[ledger-connector] supported: ${JSON.stringify({ isWebHidSupported, isWebSocketSupportedPromise })}`);
+    console.log(`[ledger-connector] supported: ${JSON.stringify({ isWebHidSupported, isWebSocketSupported })}`);
   }
 
   if (isWebHidSupported) {
@@ -117,7 +115,7 @@ export async function makeTransport(
  *
  * @param transport
  */
-export function resetTransport(transport?: WebSocketTransport | WebHidTransport): void {
+export function resetTransport(transport?: LedgerTransport): void {
   if (transport) {
     void transport.close();
   }
