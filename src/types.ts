@@ -55,6 +55,10 @@ declare module '@ledgerhq/hw-app-eth' {
     }>;
 
     public signPersonalMessage(path: string, messageHex: string): Promise<Signature<number>>;
+
+    public eth2GetPublicKey(path: string, boolDisplay?: boolean): Promise<{ publicKey: string }>;
+
+    public eth2SetWithdrawalIndex(withdrawalIndex: number): Promise<boolean>;
   }
 }
 
