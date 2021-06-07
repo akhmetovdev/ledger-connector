@@ -9,7 +9,7 @@ import { checkWebSocketRecursively } from './websocket';
 /**
  *
  */
-let transport: WebSocketTransport | WebHidTransport | null = null;
+let cachedTransport: WebSocketTransport | WebHidTransport | null = null;
 
 /**
  *
@@ -38,8 +38,8 @@ if (typeof window != 'undefined') {
 export async function makeTransport(
   ledgerLiveAppName: LedgerLiveAppName
 ): Promise<WebSocketTransport | WebHidTransport> {
-  if (transport) {
-    return transport;
+  if (cachedTransport) {
+    return cachedTransport;
   }
 
   if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
@@ -63,9 +63,9 @@ export async function makeTransport(
   ]);
 
   if (isWebHidSupported) {
-    transport = await WebHidTransport.create();
+    cachedTransport = await WebHidTransport.create();
 
-    return transport;
+    return cachedTransport;
   } else if (isWebSocketSupported) {
     try {
       await WebSocketTransport.check(WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT);
@@ -75,9 +75,9 @@ export async function makeTransport(
       await checkWebSocketRecursively();
     }
 
-    transport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
+    cachedTransport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
 
-    return transport;
+    return cachedTransport;
   }
 
   throw new NotAvailableError('NotAvailable');
@@ -85,7 +85,12 @@ export async function makeTransport(
 
 /**
  *
+ * @param transport
  */
-export function resetTransport(): void {
-  transport = null;
+export function resetTransport(transport?: WebSocketTransport | WebHidTransport): void {
+  if (transport) {
+    void transport.close();
+  }
+
+  cachedTransport = null;
 }
