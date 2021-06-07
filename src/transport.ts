@@ -2,7 +2,7 @@ import WebSocketTransport from '@ledgerhq/hw-transport-http/lib/WebSocketTranspo
 import WebHidTransport from '@ledgerhq/hw-transport-webhid';
 import { UAParser, UAParserInstance } from 'ua-parser-js';
 import { LedgerLiveAppName, WEBSOCKET_BRIDGE_URL, WEBSOCKET_CHECK_TIMEOUT } from './constants';
-import { MobileDeviceNotSupportedError, NotAvailableError } from './errors';
+import { MobileDeviceNotSupportedError, NotAvailableError, SafariNotSupportedError } from './errors';
 import { openLedgerLiveApp } from './utils';
 import { checkWebSocketRecursively } from './websocket';
 
@@ -48,11 +48,13 @@ export async function makeTransport(
 
   const { type: deviceType } = uaParser.getDevice();
   const { name: browserName } = uaParser.getBrowser();
-  const isSafari = browserName ? browserName.toLowerCase().includes('safari') : false;
-  const isNotSafari = !isSafari;
 
   if (deviceType && ['mobile', 'tablet'].includes(deviceType)) {
     throw new MobileDeviceNotSupportedError('MobileDeviceNotSupported');
+  }
+
+  if (browserName && browserName.toLowerCase().includes('safari')) {
+    throw new SafariNotSupportedError('SafariNotSupported');
   }
 
   const [isWebHidSupported, isWebSocketSupported] = await Promise.all([
@@ -60,7 +62,7 @@ export async function makeTransport(
     isWebSocketSupportedPromise
   ]);
 
-  if (isWebHidSupported && isNotSafari) {
+  if (isWebHidSupported) {
     transport = await WebHidTransport.create();
 
     return transport;
