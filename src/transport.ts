@@ -27,6 +27,7 @@ let isWebHidSupportedPromise: Promise<boolean> | null = null;
  */
 if (typeof window != 'undefined') {
   uaParser = new UAParser();
+  isWebSocketSupportedPromise = WebSocketTransport.isSupported()
   isWebHidSupportedPromise = WebHidTransport.isSupported();
 }
 
@@ -42,13 +43,13 @@ export async function makeTransport(
   }
 
   if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
-    throw new NotAvailableError('NotAvailableError');
+    throw new NotAvailableError('NotAvailable');
   }
 
   const { type } = uaParser.getDevice();
 
   if (type && ['mobile', 'tablet'].includes(type)) {
-    throw new MobileDeviceNotSupportedError('MobileDeviceNotSupportedError');
+    throw new MobileDeviceNotSupportedError('MobileDeviceNotSupported');
   }
 
   const [isWebHidSupported, isWebSocketSupported] = await Promise.all([
@@ -74,7 +75,7 @@ export async function makeTransport(
     return transport;
   }
 
-  throw new NotAvailableError('NotAvailableError');
+  throw new NotAvailableError('NotAvailable');
 }
 
 /**
