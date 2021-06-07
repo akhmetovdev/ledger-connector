@@ -39,15 +39,33 @@ export async function makeTransport(
   ledgerLiveAppName: LedgerLiveAppName
 ): Promise<WebSocketTransport | WebHidTransport> {
   if (cachedTransport) {
+    if (__DEV__) {
+      console.log(`[ledger-connector] returned cached transport`);
+    }
+
     return cachedTransport;
   }
 
   if (uaParser == null || isWebSocketSupportedPromise == null || isWebHidSupportedPromise == null) {
+    if (__DEV__) {
+      console.log(
+        `[ledger-connector] not available: ${JSON.stringify({
+          uaParser: uaParser == null,
+          isWebSocketSupportedPromise: isWebSocketSupportedPromise == null,
+          isWebHidSupportedPromise: isWebHidSupportedPromise == null
+        })}`
+      );
+    }
+
     throw new NotAvailableError('NotAvailable');
   }
 
   const { type: deviceType } = uaParser.getDevice();
   const { name: browserName } = uaParser.getBrowser();
+
+  if (__DEV__) {
+    console.log(`[ledger-connector] user agent parser: ${JSON.stringify({ deviceType, browserName })}`);
+  }
 
   if (deviceType && ['mobile', 'tablet'].includes(deviceType)) {
     throw new MobileDeviceNotSupportedError('MobileDeviceNotSupported');
@@ -62,8 +80,16 @@ export async function makeTransport(
     isWebSocketSupportedPromise
   ]);
 
+  if (__DEV__) {
+    console.log(`[ledger-connector] supported: ${JSON.stringify({ isWebHidSupported, isWebSocketSupportedPromise })}`);
+  }
+
   if (isWebHidSupported) {
     cachedTransport = await WebHidTransport.create();
+
+    if (__DEV__) {
+      console.log(`[ledger-connector] created WebHID transport: ${cachedTransport}`);
+    }
 
     return cachedTransport;
   } else if (isWebSocketSupported) {
@@ -76,6 +102,10 @@ export async function makeTransport(
     }
 
     cachedTransport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
+
+    if (__DEV__) {
+      console.log(`[ledger-connector] created WebSocket transport: ${cachedTransport}`);
+    }
 
     return cachedTransport;
   }
