@@ -88,7 +88,7 @@ export async function makeTransport(
     cachedTransport = await WebHidTransport.create();
 
     if (__DEV__) {
-      console.log(`[ledger-connector] created WebHID transport: ${cachedTransport}`);
+      console.log(`[ledger-connector] created WebHID transport:`, cachedTransport);
     }
 
     return cachedTransport;
@@ -104,7 +104,7 @@ export async function makeTransport(
     cachedTransport = await WebSocketTransport.open(WEBSOCKET_BRIDGE_URL);
 
     if (__DEV__) {
-      console.log(`[ledger-connector] created WebSocket transport: ${cachedTransport}`);
+      console.log(`[ledger-connector] created WebSocket transport:`, cachedTransport);
     }
 
     return cachedTransport;
