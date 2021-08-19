@@ -1,6 +1,6 @@
 {
   "name": "@akhmetovdev/ledger-connector",
-  "version": "1.0.22",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -31,18 +31,19 @@
     "prepare": "tsdx build"
   },
   "dependencies": {
-    "@ledgerhq/hw-app-btc": "^5.51.1",
-    "@ledgerhq/hw-app-eth": "^5.53.0",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^3.2.1",
+    "@ledgerhq/hw-app-btc": "^6.3.0",
+    "@ledgerhq/hw-app-eth": "^6.5.0",
     "@ledgerhq/hw-transport-u2f": "^5.36.0-deprecated",
-    "@ledgerhq/hw-transport-webhid": "^5.51.1",
+    "@ledgerhq/hw-transport-webhid": "^6.4.1",
     "ua-parser-js": "^0.7.28"
   },
   "devDependencies": {
     "@types/ua-parser-js": "^0.7.36",
-    "husky": "^6.0.0",
+    "husky": "^7.0.1",
     "tsdx": "^0.14.1",
-    "tslib": "^2.2.0",
-    "typescript": "^4.3.2"
+    "tslib": "^2.3.1",
+    "typescript": "^4.3.5"
   },
   "husky": {
     "hooks": {

@@ -1,3 +1,4 @@
+import Transport from '@ledgerhq/hw-transport';
 import U2FTransport from '@ledgerhq/hw-transport-u2f';
 import WebHidTransport from '@ledgerhq/hw-transport-webhid';
 import { UAParser, UAParserInstance } from 'ua-parser-js';
@@ -6,7 +7,7 @@ import { MobileDeviceNotSupportedError, NotAvailableError, SafariNotSupportedErr
 /**
  *
  */
-let cachedTransport: LedgerTransport | null = null;
+let cachedTransport: Transport | null = null;
 
 /**
  *
@@ -30,7 +31,7 @@ if (typeof window != 'undefined') {
  *
  * @param withCachedTransport
  */
-export async function makeTransport(withCachedTransport: boolean = true): Promise<LedgerTransport> {
+export async function makeTransport(withCachedTransport: boolean = true): Promise<Transport> {
   if (cachedTransport && withCachedTransport) {
     if (__DEV__) {
       console.log(`[ledger-connector] returned cached transport:`, cachedTransport);
@@ -100,7 +101,7 @@ export async function makeTransport(withCachedTransport: boolean = true): Promis
  *
  * @param transport
  */
-export async function resetTransport(transport?: LedgerTransport): Promise<void> {
+export async function resetTransport(transport?: Transport): Promise<void> {
   if (transport) {
     await transport.close().catch(() => {});
   }
