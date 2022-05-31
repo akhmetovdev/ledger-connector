@@ -49,7 +49,7 @@ export async function makeAtomApp(withCachedTransport: boolean = true): Promise<
  *
  * @param withCachedTransport
  */
-export async function makeTerraApp(withCachedTransport: boolean = true): Promise<Luna> {
+export async function makeLunaApp(withCachedTransport: boolean = true): Promise<Luna> {
   const transport = await makeTransport(withCachedTransport);
 
   return new Luna(transport);
