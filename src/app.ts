@@ -1,7 +1,8 @@
 import Ada from '@cardano-foundation/ledgerjs-hw-app-cardano';
 import Btc from '@ledgerhq/hw-app-btc';
-import Atom from '@ledgerhq/hw-app-cosmos';
 import Eth from '@ledgerhq/hw-app-eth';
+import Luna from '@terra-money/ledger-terra-js';
+import Atom from 'ledger-cosmos-js';
 import { makeTransport } from './transport';
 
 /**
@@ -42,4 +43,14 @@ export async function makeAtomApp(withCachedTransport: boolean = true): Promise<
   const transport = await makeTransport(withCachedTransport);
 
   return new Atom(transport);
+}
+
+/**
+ *
+ * @param withCachedTransport
+ */
+export async function makeTerraApp(withCachedTransport: boolean = true): Promise<Luna> {
+  const transport = await makeTransport(withCachedTransport);
+
+  return new Luna(transport);
 }
