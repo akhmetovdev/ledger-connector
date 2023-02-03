@@ -3,6 +3,7 @@ import Btc from '@ledgerhq/hw-app-btc';
 import Eth from '@ledgerhq/hw-app-eth';
 import Luna from '@terra-money/ledger-terra-js';
 import Atom from 'ledger-cosmos-js';
+import Sol from '@ledgerhq/hw-app-solana';
 import { makeTransport } from './transport';
 
 /**
@@ -22,7 +23,7 @@ export async function makeEthApp(withCachedTransport: boolean = true): Promise<E
 export async function makeBtcApp(withCachedTransport: boolean = true): Promise<Btc> {
   const transport = await makeTransport(withCachedTransport);
 
-  return new Btc(transport);
+  return new Btc({ transport, scrambleKey: 'BTC', currency: 'bitcoin' });
 }
 
 /**
@@ -53,4 +54,14 @@ export async function makeLunaApp(withCachedTransport: boolean = true): Promise<
   const transport = await makeTransport(withCachedTransport);
 
   return new Luna(transport);
+}
+
+/**
+ *
+ * @param withCachedTransport
+ */
+export async function makeSolApp(withCachedTransport: boolean = true): Promise<Sol> {
+  const transport = await makeTransport(withCachedTransport);
+
+  return new Sol(transport);
 }

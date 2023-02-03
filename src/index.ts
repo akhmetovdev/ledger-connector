@@ -5,10 +5,11 @@ import U2FTransport from '@ledgerhq/hw-transport-u2f';
 import WebHidTransport from '@ledgerhq/hw-transport-webhid';
 import Luna from '@terra-money/ledger-terra-js';
 import Atom from 'ledger-cosmos-js';
+import Sol from '@ledgerhq/hw-app-solana';
 
-// @ts-ignore
+// @ts-expect-error
 export * from './types';
 export * from './app';
 export * from './errors';
 export * from './transport';
-export { Ada, Btc, Atom, Eth, Luna, U2FTransport, WebHidTransport };
+export { Ada, Btc, Atom, Eth, Luna, U2FTransport, WebHidTransport, Sol };
